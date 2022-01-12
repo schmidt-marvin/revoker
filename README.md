@@ -5,6 +5,7 @@ This repository contains a Java 8 implementation of a Certificate Revocation Lis
 This fork adds customized functionality to support certificate revocation needs of my [bachelors thesis **"Signed QR-Codes"**](https://gitlab.rlp.net/marvin/ws2122-bachelor/). <br>Changes made to the original repo will be tracked here:
 - [x] OCSP using ECDSA keys
 - [x] Improved usage documentation<br>(Changes in README.md marked with *)
+- [x] bulk .p12 to .jks conversion utility
 
 
 # Overview

@@ -1,0 +1,2 @@
+C:\Users\user\AppData\Roaming\CertificateProductionUtility\test\ccc\root\ocsp\rootOCSPCredentials.p12	test123
+C:\Users\user\AppData\Roaming\CertificateProductionUtility\test\ccc\root\rootCredentials.p12	test123
