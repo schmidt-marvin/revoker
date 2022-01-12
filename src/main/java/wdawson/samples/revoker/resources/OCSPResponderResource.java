@@ -50,6 +50,7 @@ import org.bouncycastle.util.encoders.UrlBase64;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import wdawson.samples.revoker.health.OCSPResponsePrinter;
 import wdawson.samples.revoker.managers.CertificateManager;
 import wdawson.samples.revoker.representations.CertificateSummary;
 import wdawson.samples.revoker.representations.OCSPCertificateStatusWrapper;
@@ -281,24 +282,7 @@ public class OCSPResponderResource {
         // build response
         OCSPResp resp = buildAndSignResponse(responseBuilder);
 
-        // Log response status
-        if (resp.getStatus() == OCSPRespBuilder.SUCCESSFUL)
-            LOG.info("certificate status = GOOD");
-        else if (resp.getStatus() == OCSPRespBuilder.MALFORMED_REQUEST)
-            LOG.info("certificate status = MALFORMED_REQUEST");
-        else if (resp.getStatus() == OCSPRespBuilder.INTERNAL_ERROR)
-            LOG.info("certificate status = INTERNAL_ERROR");
-        else if (resp.getStatus() == OCSPRespBuilder.TRY_LATER)
-            LOG.info("certificate status = TRY_LATER");
-        else if (resp.getStatus() == OCSPRespBuilder.SIG_REQUIRED)
-            LOG.info("certificate status = SIG_REQUIRED");
-        else if (resp.getStatus() == OCSPRespBuilder.UNAUTHORIZED)
-            LOG.info("certificate status = UNAUTHORIZED");
-        else
-            LOG.info("certificate status = unknown response status (" + resp.getStatus() + ")");
-
-        // Log actual response
-        LOG.info("built response as B64 = " + Base64.toBase64String(resp.getEncoded()));
+        OCSPResponsePrinter.printOCSPResponse(resp);
 
         return resp;
     }

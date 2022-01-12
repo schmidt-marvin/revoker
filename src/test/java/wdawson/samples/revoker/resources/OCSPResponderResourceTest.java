@@ -51,6 +51,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import wdawson.samples.revoker.health.OCSPResponsePrinter;
 import wdawson.samples.revoker.managers.CertificateManager;
 import wdawson.samples.revoker.parsers.ocsp.OCSPReqMessageBodyReader;
 import wdawson.samples.revoker.parsers.ocsp.OCSPReqMessageBodyWriter;
@@ -265,6 +266,8 @@ public class OCSPResponderResourceTest {
 
         OCSPResp ocspResp = resources.client().target("/ocsp/").request()
                 .post(Entity.entity(ocspReq, "application/ocsp-request"), OCSPResp.class);
+        OCSPResponsePrinter.printOCSPResponse(ocspResp);
+
 
         validateSuccessfulResponse(ocspResp, ocspReq, validCert);
 
@@ -279,6 +282,8 @@ public class OCSPResponderResourceTest {
 
         OCSPResp ocspResp = resources.client().target("/ocsp/").request()
                 .post(Entity.entity(ocspReq, "application/ocsp-request"), OCSPResp.class);
+        OCSPResponsePrinter.printOCSPResponse(ocspResp);
+
 
         validateSuccessfulResponse(ocspResp, ocspReq, revokedCert);
 
@@ -293,6 +298,8 @@ public class OCSPResponderResourceTest {
 
         OCSPResp ocspResp = resources.client().target("/ocsp/").request()
                 .post(Entity.entity(ocspReq, "application/ocsp-request"), OCSPResp.class);
+        OCSPResponsePrinter.printOCSPResponse(ocspResp);
+
 
         validateSuccessfulResponse(ocspResp, ocspReq, expiredCert);
 
@@ -307,6 +314,8 @@ public class OCSPResponderResourceTest {
 
         OCSPResp ocspResp = resources.client().target("/ocsp/").request()
                 .post(Entity.entity(ocspReq, "application/ocsp-request"), OCSPResp.class);
+        OCSPResponsePrinter.printOCSPResponse(ocspResp);
+
 
         validateSuccessfulResponse(ocspResp, ocspReq, unknownCert);
 
@@ -318,6 +327,8 @@ public class OCSPResponderResourceTest {
     private void validateSuccessfulResponse(OCSPResp ocspResp,
                                             OCSPReq ocspReq,
                                             CertificateSummary... summaries) throws Exception {
+        OCSPResponsePrinter.printOCSPResponse(ocspResp);
+
         assertThat(summaries).isNotEmpty();
 
         assertThat(ocspResp.getStatus()).isEqualTo(OCSPRespBuilder.SUCCESSFUL);
