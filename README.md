@@ -1,6 +1,11 @@
 # Introduction
-This repository contains a Java 8 implementation of a Certificate Revocation List (CRL) Distribution Point and an Online
-Certificate Status Protocol (OCSP) Responder.
+This repository contains a Java 8 implementation of a Certificate Revocation List (CRL) Distribution Point and an Online Certificate Status Protocol (OCSP) Responder.
+
+# Changes in this fork
+This fork adds customized functionality to support certificate revocation needs of my [bachelors thesis **"Signed QR-Codes"**](https://gitlab.rlp.net/marvin/ws2122-bachelor/). <br>Changes made to the original repo will be tracked here:
+- [x] OCSP using ECDSA keys
+- [x] Improved usage documentation<br>(Changes in README.md marked with *)
+
 
 # Overview
 This app is a Dropwizard app that can respond to CRL requests and OCSP requests for a given CA. You need to provide the app
@@ -25,9 +30,9 @@ To test the application, run the following commands.
   java -jar target/revoker-0.1.0.jar server conf.yml
   ```
 
-# Configuration
+# *Configuration
 
-## Requirements
+## *Requirements
 
 You will need to supply:
 - `someconfigname.yml` --> configuration file 
@@ -37,7 +42,7 @@ You will need to supply:
 
 Sample sets of config files can be found [here](./src/test/resources) and [here](./src/test/resources/customized_example").
 
-## YML configuration
+## *YML configuration
 The `config.yml` looks like this by default:
 ```yml
 server:
@@ -83,18 +88,18 @@ Some notes on how the provided parametes affect the functionality of the app wil
     http://localhost:8081
     ```
 
-  - OCSP requests via POST and GET should be sent to 
+  - *OCSP requests via POST and GET should be sent to
 
     ```
     http://localhost:8080/ocsp/
     ```
 
-  - A GET request should look like this, for example:
+  - *A GET request should look like this, for example:
     ```
     http://localhost:8080/ocsp/MHoweDBaMFgwOjAJBgUrDgMCGgUABBTtlxsOgPp7xrvBIDM8XHhNB3xIZAQUhmVCR0xqIhwWe8LUHryoqMZ01HwCAQGgGjAYMBYGCSsGAQUFBzABAgEB_wQGAX5ODdB4ohowGDAWBgkrBgEFBQcwAQIBAf8EBgF-Tg3QeA..
     ```
 
-  - CRLs can be retrieved from 
+  - *CRLs can be retrieved from 
     ```
     http://localhost:8080/crls/mycacrl.crl
     ```
@@ -114,7 +119,7 @@ Some notes on how the provided parametes affect the functionality of the app wil
         -cert intermediate/certs/test.example.com.cert.pem
   ```
 
-## CRL Distribution Point
+## *CRL Distribution Point
 
 - Navigate a browser to this URL. The CRL will be provided by the server.
 
