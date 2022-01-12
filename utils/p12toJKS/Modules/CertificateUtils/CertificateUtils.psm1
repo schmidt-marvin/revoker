@@ -67,6 +67,12 @@ foreach ($line in Get-Content $listPath)
 	$pass = ($line -split "`t")[1]
 	echo "($loc).jks"
 
+	# delete target keystore if it exists (would create prompt otherwise)
+	if (Test-Path $newloc) 
+	{
+  		Remove-Item $newloc
+	}
+
 	keytool -v `
 	-importkeystore -srckeystore $loc `
 	-srcstoretype PKCS12 -srcstorepass $pass `

@@ -1,6 +1,6 @@
 # Introduction
 
-Simple conversion script to create ``JKS`` files from ``P12`` (PKCS12-formatted) files using the java ``keytool``. <br>Will only work for Windows systems with access to PowerShell and JRE installed. <br>Be aware, that this script does not overwrite existing .jks files at the target directories, so take care to clean these before executing.
+Simple conversion script to create ``JKS`` files from ``P12`` (PKCS12-formatted) files using the java ``keytool``. <br>Will only work for Windows systems with access to PowerShell and JRE installed.
 
 # Installation and usage
 
