@@ -118,14 +118,37 @@ public class OCSPResponderResource {
             throw new IllegalArgumentException("Could not build responder ID", e);
         }
 
-        // Setup Content Signer
-        try {
-            contentSigner = new JcaContentSignerBuilder("SHA256withRSA")
-                    .setProvider("BC")
-                    .build(signingKey);
-        } catch (OperatorCreationException e) {
-            throw new IllegalArgumentException("Could not build contentSigner", e);
+        /** java.security standard names document --> https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html
+         * Key.getAlgorithm(); will return one in the set of strings "DiffieHellman", "DSA", "RSA", "RSASSA-PSS" or "EC"
+         *
+         * Key usage will only be foreseen for RSA and EC keys. */
+        LOG.info("Configuring OCSP content signer for " + signingKey.getAlgorithm() + " keys.");
+
+        // Setup RSA Content Signer
+        if (signingKey.getAlgorithm().equals("RSA")) {
+            try {
+                contentSigner = new JcaContentSignerBuilder("SHA256withRSA")
+                        .setProvider("BC")
+                        .build(signingKey);
+            } catch (OperatorCreationException e) {
+                throw new IllegalArgumentException("Could not build contentSigner (RSA)", e);
+            }
         }
+        else if (signingKey.getAlgorithm().equals("EC")) {
+            try {
+                contentSigner = new JcaContentSignerBuilder("SHA256withECDSA")
+                        .setProvider("BC")
+                        .build(signingKey);
+            } catch (OperatorCreationException e) {
+                throw new IllegalArgumentException("Could not build contentSigner (EC)", e);
+            }
+        }
+        else
+            throw new IllegalArgumentException("Could not build contentSigner for signingKey type " + signingKey.getAlgorithm());
+
+
+        // Setup ECDSA Content Signer // TODO: Detect if ECDSA key, set up for ECDSA keys
+
     }
 
     /**
