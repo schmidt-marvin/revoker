@@ -1,0 +1,27 @@
+server:
+  requestLog:
+    timeZone: UTC
+  applicationConnectors:
+    - type: http
+      port: 10101
+
+  adminConnectors:
+    - type: http
+      port: 10102
+
+logging:
+  level: INFO
+  appenders:
+    - type: console
+
+ocspResponder:
+  keyStorePath: /root/ocsp_config/root/rootOCSPCredentials.jks # /path/to/ocsp-signing.jks (!)
+  keyStorePassphrase: ""
+  keyStoreAlias: "signedqr production utility - root - ocsp responder credentials"
+
+certificateAuthority:
+  caIndexFile: /root/ocsp_config/root/index.txt
+  refreshSeconds: 10
+  crlFiles:
+    - name: "rootCertificate.crl"
+      filePath: /root/ocsp_config/root/rootCertificate.pem # /path/to/crl.pem (!)
