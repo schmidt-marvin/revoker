@@ -44,6 +44,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.UrlBase64;
 import org.joda.time.DateTime;
@@ -216,7 +217,7 @@ public class OCSPResponderResource {
     private OCSPResp processOCSPRequest(OCSPReq ocspReq) {
         try {
             return doProcessOCSPRequest(ocspReq);
-        } catch (OCSPException e) {
+        } catch (OCSPException | IOException e) {
             try {
                 // Try making an internal error response as a last ditch attempt.
                 LOG.error("Error processing OCSP Request!", e);
@@ -250,7 +251,7 @@ public class OCSPResponderResource {
      * @param ocspReq The OCSP request
      * @return The OCSP response
      */
-    private OCSPResp doProcessOCSPRequest(OCSPReq ocspReq) throws OCSPException {
+    private OCSPResp doProcessOCSPRequest(OCSPReq ocspReq) throws OCSPException, IOException {
         BasicOCSPRespBuilder responseBuilder = new BasicOCSPRespBuilder(responderID);
 
         checkForValidRequest(ocspReq);
@@ -276,7 +277,30 @@ public class OCSPResponderResource {
         for (Req request : requests) {
             addResponse(responseBuilder, request);
         }
-        return buildAndSignResponse(responseBuilder);
+
+        // build response
+        OCSPResp resp = buildAndSignResponse(responseBuilder);
+
+        // Log response status
+        if (resp.getStatus() == OCSPRespBuilder.SUCCESSFUL)
+            LOG.info("certificate status = GOOD");
+        else if (resp.getStatus() == OCSPRespBuilder.MALFORMED_REQUEST)
+            LOG.info("certificate status = MALFORMED_REQUEST");
+        else if (resp.getStatus() == OCSPRespBuilder.INTERNAL_ERROR)
+            LOG.info("certificate status = INTERNAL_ERROR");
+        else if (resp.getStatus() == OCSPRespBuilder.TRY_LATER)
+            LOG.info("certificate status = TRY_LATER");
+        else if (resp.getStatus() == OCSPRespBuilder.SIG_REQUIRED)
+            LOG.info("certificate status = SIG_REQUIRED");
+        else if (resp.getStatus() == OCSPRespBuilder.UNAUTHORIZED)
+            LOG.info("certificate status = UNAUTHORIZED");
+        else
+            LOG.info("certificate status = unknown response status (" + resp.getStatus() + ")");
+
+        // Log actual response
+        LOG.info("built response as B64 = " + Base64.toBase64String(resp.getEncoded()));
+
+        return resp;
     }
 
     /**
