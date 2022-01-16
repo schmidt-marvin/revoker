@@ -6,12 +6,7 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -341,7 +336,7 @@ public class OCSPResponderResourceTest {
                 new JcaContentVerifierProviderBuilder().setProvider("BC").build(signingCertificate.getPublicKey()));
         assertThat(validSignature).isTrue().withFailMessage("Signature was invalid");
         assertThat(basicResponse.getSignatureAlgorithmID()).isEqualTo(
-                new DefaultSignatureAlgorithmIdentifierFinder().find("SHA256withRSA")
+                new DefaultSignatureAlgorithmIdentifierFinder().find("SHA256withECDSA")
         );
 
         // check extensions
@@ -392,7 +387,7 @@ public class OCSPResponderResourceTest {
     private OCSPReq buildSignedOCSPRequest(BigInteger serialNumber) throws Exception {
         return getOCSPReqBuilder(serialNumber)
                 .setRequestorName(X500Name.getInstance(signingCertificate.getSubjectX500Principal().getEncoded()))
-                .build(new JcaContentSignerBuilder("SHA256withRSA")
+                .build(new JcaContentSignerBuilder("SHA256withECDSA")
                                 .setProvider("BC")
                                 .build(signingKey),
                         signingCertificateChain
@@ -465,7 +460,7 @@ public class OCSPResponderResourceTest {
         KeyStore keyStore = loadKeyStore();
 
         try {
-            Certificate[] certificateChain = keyStore.getCertificateChain("ocsp-signing");
+            Certificate[] certificateChain = keyStore.getCertificateChain("signedqr production utility - root - ocsp responder credentials");
             X509Certificate[] x509CertificateChain = new X509Certificate[certificateChain.length];
             for (int i = 0; i < certificateChain.length; ++i) {
                 x509CertificateChain[i] = (X509Certificate) certificateChain[i];
@@ -487,16 +482,18 @@ public class OCSPResponderResourceTest {
         KeyStore keyStore = loadKeyStore();
 
         try {
-            return signingKey = (PrivateKey) keyStore.getKey("ocsp-signing", "notsecret".toCharArray());
+            return signingKey = (PrivateKey) keyStore.getKey("signedqr production utility - root - ocsp responder credentials", "test123".toCharArray());
         } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
     private static KeyStore loadKeyStore() {
+
         try {
-            KeyStore ocspKeyStore = KeyStore.getInstance("JKS");
-            ocspKeyStore.load(Resources.getResource("ocsp/ocsp-signing.jks").openStream(), "notsecret".toCharArray());
+            KeyStore ocspKeyStore = KeyStore.getInstance("PKCS12");
+            ocspKeyStore.load(Resources.getResource("ocsp/rootOCSPCredentials.p12").openStream(), "test123".toCharArray());
             return ocspKeyStore;
         } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
             throw new RuntimeException(e);

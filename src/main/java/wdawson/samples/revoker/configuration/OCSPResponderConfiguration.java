@@ -25,13 +25,13 @@ public class OCSPResponderConfiguration {
     @OneOf({
             "JKS",          /** {@link sun.security.provider.Sun}      **/
             "JCEKS",        /** {@link sun.security.ssl.SunJSSE}       **/
-            "PCKS12",       /** {@link com.sun.crypto.provider.SunJCE} **/
+            "PKCS12",       /** {@link com.sun.crypto.provider.SunJCE} **/
             "Windows-MY",   /** {@link sun.security.mscapi.SunMSCAPI}  **/
             "Windows-ROOT", /** {@link sun.security.mscapi.SunMSCAPI}  **/
             "KeychainStore" /** {@link apple.security.AppleProvider}   **/
     })
     @JsonProperty
-    private String keyStoreType = "JKS";
+    private String keyStoreType = "PKCS12";
 
     /**
      * The KeyStore passphrase.
